@@ -9,16 +9,27 @@
 </head>
 <body>
 {% if question %}
-<ul>
-    {{ question.question_text }}
-    {% for choice in question.choice_set.all %}
-    <li>
-        {{ choice.choice_text }}
-    </li>
-    {% endfor %}
-    {% else %}
-    <p> No polls are available</p>
-</ul>
+    <h1>{{ question.question_text }}</h1>
+
+    {% if error_message %}
+    <p><strong>{{ error_message }}</strong></p>
+    {% endif %}
+
+    <form action="{% url 'polls:vote' question_id=question.pk %}" method="post">
+        {% csrf_token %}
+        {% for choice in question.choice_set.all %}
+        <input
+                id="choice{{ forloop.counter }}"
+                value="{{ choice.pk }}"
+                type="radio"
+                name="choice">
+        <label for="choice{{ forloop.counter }}">
+            {{ choice.choice_text }}
+        </label>
+        <br>
+        {% endfor %}
+        <button type="submit">Vote</button>
+    </form>
 {% endif %}
 
 </body>
