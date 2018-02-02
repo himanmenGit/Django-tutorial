@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.shortcuts import render
 
 from django.template import loader
@@ -40,7 +40,12 @@ def detail(request, question_id):
     :param question_id:
     :return:
     """
-    question = Question.objects.get(pk=question_id)
+    try:
+        # question을 get()시도
+        question = Question.objects.get(pk=question_id)
+
+    except Question.DoesNotExist:
+        raise Http404('Question does not exist')
     context = {
         "question": question,
     }
@@ -48,7 +53,6 @@ def detail(request, question_id):
 
 
 def results(request, question_id):
-
     return HttpResponse("You're results on question %s." % question_id)
 
 
